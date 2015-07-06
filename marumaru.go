@@ -49,10 +49,17 @@ func (scraper *Marumaru) GetMangaList() []MangaInfo {
 	return mangaList
 }
 
-func (scraper *Marumaru) GetChapterList(url string) []ChapterInfo {
-	doc, err := goquery.NewDocument(url)
+func (scraper *Marumaru) GetChapterList(mangaInfo MangaInfo) MangaScraped {
+	doc, err := goquery.NewDocument(mangaInfo.Link)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	var additional MangaInfo
+	status, exist := doc.Find("meta[name=classifiation]").Attr("content")
+	status = NormalizeStatus(status)
+	if exist && status != mangaInfo.Status {
+		additional.Status = status
 	}
 
 	content := doc.Find("#vContent")
@@ -76,13 +83,14 @@ func (scraper *Marumaru) GetChapterList(url string) []ChapterInfo {
 		}
 
 		chapterList[w] = ChapterInfo{
-			Name: name,
-			Link: link,
+			MangaID: mangaInfo.ID,
+			Name:    name,
+			Link:    link,
 		}
 		w++
 	})
 
-	return chapterList[0:w]
+	return MangaScraped{mangaInfo, additional, chapterList[0:w]}
 }
 
 func (scraper *Marumaru) GetPages(url string) []PageInfo {

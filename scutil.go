@@ -4,28 +4,44 @@ import (
 	"sync"
 )
 
-func GetAllChapters(scraper Scraper, mangaList []MangaInfo, chapterListChan chan *[]ChapterInfo) {
+func NormalizeStatus(s string) string {
+	switch s {
+	case "주간":
+		return "Weekly"
+	case "격주":
+		return "Biweekly"
+	case "월간":
+		return "Monthly"
+	case "격월/비정기":
+		return "Ongoing"
+	case "완결", "붕탁 완결":
+		return "Completed"
+	case "단행본":
+	case "단편":
+		return "Completed"
+	case "와이!":
+	case "오토코노코 앤솔로지":
+	case "여장소년 엔솔로지":
+	case "오토코노코타임":
+	}
+	return ""
+}
+
+func GetAllChapters(scraper Scraper, mangaList []MangaInfo, ch chan MangaScraped) {
 	go func() {
 		var wg sync.WaitGroup
 		concurrency := 100
 		sem := make(chan bool, concurrency)
-		i := 0
-		sum := 0
-		for _, m := range mangaList {
+		for _, mangaInfo := range mangaList {
 			sem <- true
 			wg.Add(1)
-			go func(url string) {
+			go func(mangaInfo MangaInfo) {
 				defer wg.Done()
 				defer func() { <-sem }()
-				chapterList := scraper.GetChapterList(url)
-				chapterListChan <- &chapterList
-				//fmt.Println(i+1, len(mangaList), chapterList[0])
-				sum += len(chapterList)
-				i++
-			}(m.Link)
+				ch <- scraper.GetChapterList(mangaInfo)
+			}(mangaInfo)
 		}
 		wg.Wait()
-		close(chapterListChan)
-		//fmt.Printf("총챕터 수 : %d\n", sum)
+		close(ch)
 	}()
 }

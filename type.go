@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+/* Types for Database */
 type MangaInfo struct {
 	gorm.Model
 	Thumbnail string
@@ -44,4 +45,11 @@ type Author struct {
 type Artist struct {
 	gorm.Model
 	Name string
+}
+
+/* Types for scrap */
+type MangaScraped struct {
+	Original    MangaInfo
+	Additional  MangaInfo
+	ChapterList []ChapterInfo
 }

@@ -9,7 +9,7 @@ import (
 
 type Scraper interface {
 	GetMangaList() []MangaInfo
-	GetChapterList(url string) []ChapterInfo
+	GetChapterList(mangaInfo MangaInfo) MangaScraped
 	GetPages(url string) []PageInfo
 }
 

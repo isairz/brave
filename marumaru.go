@@ -112,7 +112,9 @@ func (scraper *Marumaru) GetPages(url string) []PageInfo {
 	pageInfo := make([]PageInfo, list.Length())
 	list.Each(func(i int, s *goquery.Selection) {
 		src, _ := s.Attr(attr)
-		pageInfo[i].Origin = src
+		pageInfo[i] = PageInfo{
+			Origin: src,
+		}
 	})
 	return pageInfo
 }

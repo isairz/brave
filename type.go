@@ -8,9 +8,9 @@ type MangaInfo struct {
 	gorm.Model
 	Thumbnail string
 	Name      string
-	Genres    []string
-	Authors   []string
-	Artists   []string
+	Genres    []Genre
+	Authors   []Author
+	Artists   []Artist
 	Status    string
 	Type      string
 	Link      string
@@ -26,4 +26,19 @@ type ChapterInfo struct {
 type PageInfo struct {
 	gorm.Model
 	Origin string
+}
+
+type Genre struct {
+	gorm.Model
+	Name string
+}
+
+type Author struct {
+	gorm.Model
+	Name string
+}
+
+type Artist struct {
+	gorm.Model
+	Name string
 }

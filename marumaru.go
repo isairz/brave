@@ -134,6 +134,8 @@ func (scraper *Marumaru) GetPageList(chapterInfo ChapterInfo) ChapterScraped {
 
 	if len(pageList) >= 2 {
 		additional.Status = "URL"
+	} else {
+		pageList = []PageInfo{}
 	}
 
 	return ChapterScraped{chapterInfo, additional, pageList}

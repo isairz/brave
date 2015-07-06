@@ -25,6 +25,11 @@ func GetAllMangaList(db *gorm.DB) (result []MangaInfo) {
 	return
 }
 
+func GetAllChapterList(db *gorm.DB) (result []ChapterInfo) {
+	db.Find(&result)
+	return
+}
+
 func GetUnscrapedChapterList(db *gorm.DB) (result []ChapterInfo) {
 	db.Where("status = ''").Find(&result)
 	return

@@ -133,6 +133,7 @@ func (scraper *Marumaru) GetPageList(chapterInfo ChapterInfo) ChapterScraped {
 	}
 
 	if len(pageList) >= 2 {
+		additional.Thumbnail = pageList[0].Origin
 		additional.Status = "URL"
 	} else {
 		pageList = []PageInfo{}

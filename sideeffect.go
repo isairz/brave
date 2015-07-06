@@ -31,7 +31,7 @@ func GetUnscrapedChapterList(db *gorm.DB) (result []ChapterInfo) {
 }
 
 func ScrapMangaList(db *gorm.DB) string {
-	mangaList := GetAllMangaList(db)
+	mangaList := scraper.GetMangaList()
 
 	for _, mangaInfo := range mangaList {
 		var f MangaInfo

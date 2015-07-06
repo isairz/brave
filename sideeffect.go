@@ -78,7 +78,11 @@ func ScrapChapters(db *gorm.DB, chapterList []ChapterInfo) string {
 	NumberOfNewPage := 0
 	for range chapterList {
 		scraped := <-ch
-		db.Find(&scraped.Original).Update(&scraped.Additional)
+		db.Model(&scraped.Original).Update(&scraped.Additional)
+		if len(scraped.PageList) == 0 {
+			continue
+		}
+
 		db.Where(&PageInfo{ChapterID: scraped.Original.ID}).Delete(&PageInfo{})
 		for _, pageInfo := range scraped.PageList {
 			db.Create(&pageInfo)

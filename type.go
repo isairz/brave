@@ -13,19 +13,22 @@ type MangaInfo struct {
 	Artists   []Artist
 	Status    string
 	Type      string
-	Link      string
+	Link      string `sql:"index"; unique_index`
 }
 
 type ChapterInfo struct {
 	gorm.Model
+	MangaID   uint `sql:"index"`
 	Thumbnail string
 	Name      string
-	Link      string
+	Link      string `sql:"index"; unique_index`
 }
 
 type PageInfo struct {
 	gorm.Model
-	Origin string
+	MangaID   uint `sql:"index"`
+	ChapterID uint `sql:"index"`
+	Origin    string
 }
 
 type Genre struct {

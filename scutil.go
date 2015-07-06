@@ -45,3 +45,22 @@ func GetAllChapters(scraper Scraper, mangaList []MangaInfo, ch chan MangaScraped
 		close(ch)
 	}()
 }
+
+func GetAllPages(scraper Scraper, chapterList []ChapterInfo, ch chan ChapterScraped) {
+	go func() {
+		var wg sync.WaitGroup
+		concurrency := 100
+		sem := make(chan bool, concurrency)
+		for _, chapterInfo := range chapterList {
+			sem <- true
+			wg.Add(1)
+			go func(chapterInfo ChapterInfo) {
+				defer wg.Done()
+				defer func() { <-sem }()
+				ch <- scraper.GetPageList(chapterInfo)
+			}(chapterInfo)
+		}
+		wg.Wait()
+		close(ch)
+	}()
+}

@@ -93,8 +93,8 @@ func (scraper *Marumaru) GetChapterList(mangaInfo MangaInfo) MangaScraped {
 	return MangaScraped{mangaInfo, additional, chapterList[0:w]}
 }
 
-func (scraper *Marumaru) GetPages(url string) []PageInfo {
-	url = strings.Replace(url, "http://mangaumaru.com/", "http://www.mangaumaru.com/", 1)
+func (scraper *Marumaru) GetPageList(chapterInfo ChapterInfo) ChapterScraped {
+	url := strings.Replace(chapterInfo.Link, "http://mangaumaru.com/", "http://www.mangaumaru.com/", 1)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -108,8 +108,6 @@ func (scraper *Marumaru) GetPages(url string) []PageInfo {
 
 	doc, err := goquery.NewDocumentFromResponse(res)
 
-	//pageInfo.title = strings.TrimSpace(doc.Find("article header .entry-title").Text())
-
 	attr := "data-lazy-src"
 	list := doc.Find("#content img[" + attr + "]")
 	if list.Length() == 0 {
@@ -117,14 +115,28 @@ func (scraper *Marumaru) GetPages(url string) []PageInfo {
 		list = doc.Find("#content img[" + attr + "]")
 	}
 
-	pageInfo := make([]PageInfo, list.Length())
+	pageList := make([]PageInfo, list.Length())
 	list.Each(func(i int, s *goquery.Selection) {
 		src, _ := s.Attr(attr)
-		pageInfo[i] = PageInfo{
-			Origin: src,
+		pageList[i] = PageInfo{
+			MangaID:   chapterInfo.MangaID,
+			ChapterID: chapterInfo.ID,
+			Origin:    src,
+			Number:    uint(i),
 		}
 	})
-	return pageInfo
+
+	var additional ChapterInfo
+	title := strings.TrimSpace(doc.Find("article header .entry-title").Text())
+	if len(title) > 0 {
+		additional.Name = title
+	}
+
+	if len(pageList) >= 2 {
+		additional.Status = "URL"
+	}
+
+	return ChapterScraped{chapterInfo, additional, pageList}
 }
 
 func (scraper *Marumaru) initCookie() error {

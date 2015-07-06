@@ -10,7 +10,7 @@ import (
 type Scraper interface {
 	GetMangaList() []MangaInfo
 	GetChapterList(mangaInfo MangaInfo) MangaScraped
-	GetPages(url string) []PageInfo
+	GetPageList(chapterInfo ChapterInfo) ChapterScraped
 }
 
 func makeCookie(rawCookies string) ([]*http.Cookie, error) {

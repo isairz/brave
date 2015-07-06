@@ -22,6 +22,7 @@ type ChapterInfo struct {
 	MangaID   uint `sql:"index"`
 	Thumbnail string
 	Name      string
+	Status    string
 	Link      string `sql:"index"; unique_index`
 }
 
@@ -29,6 +30,7 @@ type PageInfo struct {
 	gorm.Model
 	MangaID   uint `sql:"index"`
 	ChapterID uint `sql:"index"`
+	Number    uint
 	Origin    string
 }
 
@@ -52,4 +54,10 @@ type MangaScraped struct {
 	Original    MangaInfo
 	Additional  MangaInfo
 	ChapterList []ChapterInfo
+}
+
+type ChapterScraped struct {
+	Original   ChapterInfo
+	Additional ChapterInfo
+	PageList   []PageInfo
 }

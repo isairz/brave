@@ -20,6 +20,7 @@ type MangaInfo struct {
 type ChapterInfo struct {
 	gorm.Model
 	MangaID   uint `sql:"index"`
+	Number    uint `sql:"index"`
 	Thumbnail string
 	Name      string
 	Status    string

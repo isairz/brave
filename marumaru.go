@@ -70,7 +70,7 @@ func (scraper *Marumaru) GetChapterList(mangaInfo MangaInfo) MangaScraped {
 
 	list := content.Find("a")
 	chapterList := make([]ChapterInfo, list.Length())
-	w := 0
+	var w uint = 0
 	list.Each(func(i int, s *goquery.Selection) {
 		name := strings.TrimSpace(s.Text())
 		if len(name) == 0 {
@@ -78,14 +78,16 @@ func (scraper *Marumaru) GetChapterList(mangaInfo MangaInfo) MangaScraped {
 		}
 		link, _ := s.Attr("href")
 		link = strings.Replace(link, "http://mangaumaru.com/", "http://www.mangaumaru.com/", 1)
+		link = strings.Replace(link, "http://www.mangaumaru.com/?p=", "http://www.mangaumaru.com/archives/", 1)
 		if !strings.HasPrefix(link, "http://www.mangaumaru.com/") {
 			return
 		}
 
 		chapterList[w] = ChapterInfo{
 			MangaID: mangaInfo.ID,
-			Name:    name,
-			Link:    link,
+			//Name:    name,
+			Number: w + 1,
+			Link:   link,
 		}
 		w++
 	})
@@ -122,7 +124,7 @@ func (scraper *Marumaru) GetPageList(chapterInfo ChapterInfo) ChapterScraped {
 			MangaID:   chapterInfo.MangaID,
 			ChapterID: chapterInfo.ID,
 			Origin:    src,
-			Number:    uint(i),
+			Number:    uint(i + 1),
 		}
 	})
 

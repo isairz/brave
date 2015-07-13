@@ -99,13 +99,13 @@ func (scraper *Marumaru) GetPageList(chapterInfo ChapterInfo) ChapterScraped {
 	url := strings.Replace(chapterInfo.Link, "http://mangaumaru.com/", "http://www.mangaumaru.com/", 1)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Fatal(err)
+		return ChapterScraped{Original: chapterInfo}
 	}
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36")
 
 	res, err := scraper.client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		return ChapterScraped{Original: chapterInfo}
 	}
 
 	doc, err := goquery.NewDocumentFromResponse(res)
@@ -142,6 +142,17 @@ func (scraper *Marumaru) GetPageList(chapterInfo ChapterInfo) ChapterScraped {
 	}
 
 	return ChapterScraped{chapterInfo, additional, pageList}
+}
+
+func (scraper *Marumaru) Proxy(url string) (resp *http.Response, err error) {
+	url = strings.Replace(url, "http://mangaumaru.com/", "http://www.mangaumaru.com/", 1)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return
+	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36")
+
+	return scraper.client.Do(req)
 }
 
 func (scraper *Marumaru) initCookie() error {

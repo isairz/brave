@@ -2,6 +2,7 @@ package brave
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/jinzhu/gorm"
 )
@@ -66,8 +67,8 @@ func ScrapMangas(db *gorm.DB, mangaList []MangaInfo) string {
 			if f.ID == 0 {
 				db.Create(&chapterInfo)
 				NumberOfNewChapter++
-			} else {
-				db.Model(&f).Update(&chapterInfo)
+			} else if f.Number != chapterInfo.Number {
+				db.Model(&f).Update(&ChapterInfo{Number: chapterInfo.Number})
 			}
 		}
 	}
@@ -96,4 +97,9 @@ func ScrapChapters(db *gorm.DB, chapterList []ChapterInfo) string {
 	}
 
 	return fmt.Sprintf("%d개의 챕터에서 %d개의 페이지를 스크랩", NumberOfNewChapter, NumberOfNewPage)
+}
+
+// FIXME: This functions is not side-effect.
+func Proxy(url string) (res *http.Response, err error) {
+	return scraper.Proxy(url)
 }

@@ -11,6 +11,7 @@ type Scraper interface {
 	GetMangaList() []MangaInfo
 	GetChapterList(mangaInfo MangaInfo) MangaScraped
 	GetPageList(chapterInfo ChapterInfo) ChapterScraped
+	Proxy(url string) (resp *http.Response, err error)
 }
 
 func makeCookie(rawCookies string) ([]*http.Cookie, error) {
